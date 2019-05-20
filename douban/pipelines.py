@@ -18,6 +18,10 @@ class DoubanPipeline(object):
         # 创建集合
         self.db_collection = self.db['movies']
 
+    def open_spider(self, spider):
+        # 清空集合
+        self.db_collection.remove({})
+
     def process_item(self, item, spider):
         # 插入一个文档
         self.db_collection.insert_one(dict(item))
@@ -38,4 +42,4 @@ class DoubanImagesPipeline(ImagesPipeline):
         # 图片名
         image_name = request.url.split("/")[-1]
         # 文件名
-        return '/%s' % image_name
+        return '/movie/%s' % image_name

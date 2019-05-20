@@ -12,7 +12,7 @@
 """
 
 from scrapy import Spider, Request
-from douban.items import DoubanItem
+from douban.items import DoubanItem, DoubanImageItem
 
 
 class SeleniumMovies(Spider):
@@ -32,9 +32,12 @@ class SeleniumMovies(Spider):
     def parse(self, response):
         image_urls = list()
         item = DoubanItem()
+        image_item = DoubanImageItem()
         movie_list = response.xpath("//div[@class='list']/a[@class='item']")
         for movie in movie_list:
             name = movie.xpath("./p/text()").extract_first().strip()
+            if name == '':
+                name = movie.xpath("./p/text()").extract()[1].strip()
             item['name'] = name
             grade = movie.xpath("./p/strong/text()").extract_first().strip()
             item['grade'] = grade
@@ -43,5 +46,5 @@ class SeleniumMovies(Spider):
             image_urls.append(image_url)
             yield item
         # 实现下载图片
-        item['image_urls'] = image_urls
-        yield item
+        image_item['image_urls'] = image_urls
+        yield image_item
