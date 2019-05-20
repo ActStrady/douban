@@ -78,29 +78,29 @@ class DoubanDownloaderMiddleware(object):
         return s
 
     def process_request(self, request, spider):
-        if spider.name == 'selenium_movies':
-            if '.jpg' not in request.url:
-                # 访问网页
-                self.driver.get(request.url)
-                try:
-                    # 模拟点击加载更多16次，共16页
-                    for i in range(15):
-                        # 点击前休眠5秒
-                        time.sleep(5)
-                        # 点击加载更多
-                        more = self.driver.find_element_by_class_name('more')
-                        more.click()
-                    # 获取页面
-                    html = self.driver.page_source
-                    # 封装一个response
-                    response = HtmlResponse(url=request.url, encoding='utf-8', body=html, request=request)
-                    return response
-                except TimeoutException:
-                    # 超时
-                    print("time out")
-                except NoSuchElementException:
-                    # 无此元素
-                    print("no such element")
+        # 过滤图片url
+        if '.jpg' not in request.url:
+            # 访问网页
+            self.driver.get(request.url)
+            try:
+                # 模拟点击加载更多16次，共16页
+                for i in range(15):
+                    # 点击前休眠5秒
+                    time.sleep(5)
+                    # 点击加载更多
+                    more = self.driver.find_element_by_class_name('more')
+                    more.click()
+                # 获取页面
+                html = self.driver.page_source
+                # 封装一个response
+                response = HtmlResponse(url=request.url, encoding='utf-8', body=html, request=request)
+                return response
+            except TimeoutException:
+                # 超时
+                print("time out")
+            except NoSuchElementException:
+                # 无此元素
+                print("no such element")
         return None
 
     def process_response(self, request, response, spider):
