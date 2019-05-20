@@ -12,7 +12,7 @@ class DoubanItem(scrapy.Item):
     name = scrapy.Field()
     # 评分
     grade = scrapy.Field()
-    image_url= scrapy.Field()
+    image_url = scrapy.Field()
     # 下载图片
     images = scrapy.Field()
     image_urls = scrapy.Field()

@@ -7,4 +7,4 @@
 # @GitHub : https://github.com/ActStrady/douban
 from scrapy import cmdline
 
-cmdline.execute('scrapy crawl selenium_movies'.split())
+cmdline.execute('scrapy crawl selenium_movies -o selenium_movies.csv'.split())

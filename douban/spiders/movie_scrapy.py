@@ -17,7 +17,7 @@ from douban.items import DoubanItem
 
 class SeleniumMovies(Spider):
     """
-    使用selenium + scrapy结合来实现
+    使用selenium + scrapy结合来实现爬取
     """
     # 爬虫名
     name = 'selenium_movies'
@@ -30,8 +30,9 @@ class SeleniumMovies(Spider):
 
     # 默认的解析函数
     def parse(self, response):
-        movie_list = response.xpath("//div[@class='list']/a[@class='item']")
+        image_urls = list()
         item = DoubanItem()
+        movie_list = response.xpath("//div[@class='list']/a[@class='item']")
         for movie in movie_list:
             name = movie.xpath("./p/text()").extract_first().strip()
             item['name'] = name
@@ -39,4 +40,8 @@ class SeleniumMovies(Spider):
             item['grade'] = grade
             image_url = movie.xpath("./div/img/@src").extract_first().strip()
             item['image_url'] = image_url
+            image_urls.append(image_url)
             yield item
+        # 实现下载图片
+        item['image_urls'] = image_urls
+        yield item

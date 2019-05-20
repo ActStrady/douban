@@ -63,9 +63,10 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    'douban.pipelines.DoubanPipeline': 300,
-# }
+ITEM_PIPELINES = {
+    'douban.pipelines.DoubanPipeline': 300,
+    'douban.pipelines.DoubanImagesPipeline': 400,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -87,3 +88,10 @@ DOWNLOADER_MIDDLEWARES = {
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# 图片文件保存目录
+IMAGES_STORE = './images/movie'
+
+# 过滤太小的图片
+IMAGES_MIN_HEIGHT = 60
+IMAGES_MIN_WIDTH = 50
