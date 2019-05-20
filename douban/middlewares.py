@@ -4,8 +4,13 @@
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
+import time
 
 from scrapy import signals
+from scrapy.http import HtmlResponse
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.webdriver.chrome.options import Options
 
 
 class DoubanSpiderMiddleware(object):
@@ -57,9 +62,13 @@ class DoubanSpiderMiddleware(object):
 
 
 class DoubanDownloaderMiddleware(object):
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the downloader middleware does not modify the
-    # passed objects.
+    def __init__(self):
+        # 无界面爬取
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--disable-gpu')
+        # 获取selenium对象
+        self.driver = webdriver.Chrome(chrome_options=chrome_options)
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -69,15 +78,28 @@ class DoubanDownloaderMiddleware(object):
         return s
 
     def process_request(self, request, spider):
-        # Called for each request that goes through the downloader
-        # middleware.
-
-        # Must either:
-        # - return None: continue processing this request
-        # - or return a Response object
-        # - or return a Request object
-        # - or raise IgnoreRequest: process_exception() methods of
-        #   installed downloader middleware will be called
+        if spider.name == 'selenium_movies':
+            print('计算机技术')
+            # 访问网页
+            self.driver.get(request.url)
+            try:
+                # 模拟点击加载更多50次
+                for i in range(50):
+                    # 点击前休眠5秒
+                    time.sleep(5)
+                    more = self.driver.find_element_by_class_name('more')
+                    more.click()
+                # 获取页面
+                html = self.driver.page_source
+                # 封装一个response
+                response = HtmlResponse(url=request.url, encoding='utf-8', body=html, request=request)
+                return response
+            except TimeoutException:
+                # 超时
+                print("time out")
+            except NoSuchElementException:
+                # 无此元素
+                print("no such element")
         return None
 
     def process_response(self, request, response, spider):
